@@ -27,6 +27,7 @@
     .card:hover .card__chevron { color: #198FEF; transform: translateX(2px); }
     .card h3 { font-size: 1rem; font-weight: 500; line-height: 1.4; color: #181a1b; }
     .card p { font-size: 0.85rem; color: #6b6b6b; line-height: 1.5; }
+    .card__badge { position: absolute; top: 12px; right: 12px; background: #198FEF; color: #fff; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .activity { margin-top: 56px; max-width: 720px; width: 100%; }
     .activity h2 { font-size: 1rem; font-weight: 600; color: #181a1b; margin-bottom: 16px; }
     .activity-list { display: flex; flex-direction: column; gap: 1px; background: #e8e8e8; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
@@ -65,6 +66,13 @@
   <footer class="footer">eFans Direct Ltd</footer>
   <script>
     const tools = [
+      {
+        name: "Ask eFans",
+        description: "AI assistant for staff â ask about suppliers, products, processes, policies",
+        url: "ask-efans.html",
+        badge: "New",
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8"/><path d="M8 13h6"/></svg>'
+      },
       {
         name: "Calculate Free Area",
         url: "https://louvre-free-area-calculator.vercel.app/",
@@ -82,134 +90,16 @@
       }
     ];
     const container = document.getElementById('cards');
+    const chevronSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6" /></svg>';
     tools.forEach(tool => {
       const a = document.createElement('a');
-      a.href = tool.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'card';
-      a.innerHTML = '<div class="card__header"><span class="card__icon">' + tool.icon + '</span><div class="card__chevron"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6" /></svg></div></div><h3>' + tool.name + '</h3>';
-      container.appendChild(a);
-    });
-
-    const SUPABASE_URL = 'https://zzcqfrtwiikyixvegtwt.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6Y3FmcnR3aWlreWl4dmVndHd0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2MDU3NjQsImV4cCI6MjA4OTE4MTc2NH0.WKWRYLzqzUh1OurBnyOtbjXgyc8S_nYy4MyRY1gpXcM';
-
-    function timeAgo(dateStr) {
-      const diff = Date.now() - new Date(dateStr).getTime();
-      const mins = Math.floor(diff / 60000);
-      if (mins < 1) return 'just now';
-      if (mins < 60) return mins + 'm ago';
-      const hrs = Math.floor(mins / 60);
-      if (hrs < 24) return hrs + 'h ago';
-      const days = Math.floor(hrs / 24);
-      return days + 'd ago';
-    }
-
-    async function loadActivity() {
-      const list = document.getElementById('activityList');
-      try {
-        const res = await fetch(
-          SUPABASE_URL + '/rest/v1/drawings?select=*&order=created_at.desc&limit=10',
-          { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
-        );
-        const data = await res.json();
-        if (!data.length) {
-          list.innerHTML = '<div class="activity-empty">No drawings yet. Create one to see it here.</div>';
-          return;
-        }
-        list.innerHTML = data.map(d => {
-          const editUrl = 'https://weather-louvre-configurator.vercel.app/weather-louvre-configurator.html';
-          return '<div class="activity-item"><div class="activity-item__info"><div class="activity-item__title">' + (d.order_number ? d.order_number + ' \u2014 ' : '') + d.supplier + ' \u2014 ' + d.width + ' x ' + d.height + 'mm</div><div class="activity-item__meta">' + timeAgo(d.created_at) + ' \u00b7 Flange ' + d.flange_w + 'x' + d.flange_h + ' \u00b7 Neck ' + d.neck_w + 'x' + d.neck_h + '</div></div><div class="activity-item__actions"><a href="' + editUrl + '" target="_blank" rel="noopener noreferrer">Edit</a></div></div>';
-        }).join('');
-      } catch (err) {
-        list.innerHTML = '<div class="activity-empty">Could not load activity.</div>';
-      }
-    }
-    loadActivity();
-  </script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eFans Direct — Internal Tools</title>
-  <link rel="icon" href="https://www.efans.co.uk/cdn/shop/files/logo-updated-white_115x@2x.png?v=1613737190">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: #fff; color: #181a1b; min-height: 100vh;
-      display: flex; flex-direction: column;
-    }
-    .topbar { padding: 20px 32px; border-bottom: 1px solid #e0e0e0; }
-    .topbar img { height: 36px; width: auto; filter: brightness(0); }
-    .page { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 60px 24px 80px; }
-    .page h1 { font-size: 2rem; font-weight: 600; color: #181a1b; margin-bottom: 40px; text-align: center; }
-    .cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; max-width: 720px; width: 100%; }
-    .card { width: 280px; border: 1px solid #d5d5d5; border-radius: 16px; padding: 28px 24px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 12px; cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; position: relative; }
-    .card:hover, .card:focus-visible { border-color: #198FEF; box-shadow: 0 0 0 1px #198FEF; }
-    .card__header { display: flex; align-items: flex-start; justify-content: space-between; }
-    .card__icon { color: #181a1b; line-height: 1; }
-    .card__icon svg { width: 28px; height: 28px; stroke-width: 1.5; }
-    .card__chevron { flex-shrink: 0; margin-top: 2px; color: #c4c4c4; transition: color 0.15s ease, transform 0.15s ease; }
-    .card__chevron svg { width: 22px; height: 22px; stroke-width: 2; }
-    .card:hover .card__chevron { color: #198FEF; transform: translateX(2px); }
-    .card h3 { font-size: 1rem; font-weight: 500; line-height: 1.4; color: #181a1b; }
-    .card p { font-size: 0.85rem; color: #6b6b6b; line-height: 1.5; }
-    .activity { margin-top: 56px; max-width: 720px; width: 100%; }
-    .activity h2 { font-size: 1rem; font-weight: 600; color: #181a1b; margin-bottom: 16px; }
-    .activity-list { display: flex; flex-direction: column; gap: 1px; background: #e8e8e8; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
-    .activity-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #fff; gap: 12px; }
-    .activity-item__info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .activity-item__title { font-size: 0.875rem; font-weight: 500; color: #181a1b; }
-    .activity-item__meta { font-size: 0.75rem; color: #8b8b8b; }
-    .activity-item__actions { display: flex; gap: 8px; flex-shrink: 0; }
-    .activity-item__actions a { font-size: 0.75rem; font-weight: 500; color: #198FEF; text-decoration: none; padding: 4px 10px; border: 1px solid #d5d5d5; border-radius: 6px; transition: background 0.15s ease, border-color 0.15s ease; }
-    .activity-item__actions a:hover { background: #f0f7ff; border-color: #198FEF; }
-    .activity-empty { padding: 32px 18px; text-align: center; font-size: 0.85rem; color: #aaa; background: #fff; }
-    .footer { text-align: center; padding: 20px; font-size: 12px; color: #aaa; }
-    @media (max-width: 640px) {
-      .cards { flex-direction: column; align-items: center; }
-      .page h1 { font-size: 1.5rem; }
-      .page { padding: 40px 16px 60px; }
-      .activity-item { flex-direction: column; align-items: flex-start; }
-      .activity-item__actions { margin-top: 8px; }
-    }
-  </style>
-</head>
-<body>
-  <div class="topbar">
-    <img src="https://www.efans.co.uk/cdn/shop/files/logo-updated-white_115x@2x.png?v=1613737190" alt="eFans Direct" />
-  </div>
-  <main class="page">
-    <h1>Internal Tools</h1>
-    <div class="cards" id="cards"></div>
-    <section class="activity">
-      <h2>Latest Activity</h2>
-      <div class="activity-list" id="activityList">
-        <div class="activity-empty">Loading...</div>
-      </div>
-    </section>
-  </main>
-  <footer class="footer">eFans Direct Ltd</footer>
-  <script>
-    const tools = [
-      {
-        name: "Calculate Free Area",
-        url: "https://louvre-free-area-calculator.vercel.app/",
-        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 6h8"/><path d="M8 6v2h8V6"/><path d="M8 14v.01"/><path d="M12 14v.01"/><path d="M16 14v.01"/><path d="M8 17v.01"/><path d="M12 17v.01"/><path d="M16 17v.01"/><path d="M8 11v.01"/><path d="M12 11v.01"/><path d="M16 11v.01"/></svg>'
-      },
-      {
-        name: "Create a Drawing",
-        url: "https://weather-louvre-configurator.vercel.app/weather-louvre-configurator.html",
-        icon: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L7 21l-4-4z"/><path d="M16 7l-1.5-1.5"/><path d="M13 10l-1.5-1.5"/><path d="M10 13l-1.5-1.5"/><path d="M7 16l-1.5-1.5"/></svg>'
-      }
-    ];
-    const container = document.getElementById('cards');
-    tools.forEach(tool => {
-      const a = document.createElement('a');
-      a.href = tool.url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.className = 'card';
-      a.innerHTML = '<div class="card__header"><span class="card__icon">' + tool.icon + '</span><div class="card__chevron"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6l-6 6" /></svg></div></div><h3>' + tool.name + '</h3>';
+      a.href = tool.url;
+      if (tool.url.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+      a.className = 'card';
+      let html = '<div class="card__header"><span class="card__icon">' + tool.icon + '</span><div class="card__chevron">' + chevronSvg + '</div></div><h3>' + tool.name + '</h3>';
+      if (tool.description) html += '<p>' + tool.description + '</p>';
+      if (tool.badge) html += '<span class="card__badge">' + tool.badge + '</span>';
+      a.innerHTML = html;
       container.appendChild(a);
     });
 
