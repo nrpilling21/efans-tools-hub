@@ -77,10 +77,12 @@
     }
     .empty-logo {
       width: 52px; height: 52px; border-radius: 16px;
-      background: var(--user-bg); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; font-weight: 600; margin-bottom: 24px;
+      margin-bottom: 24px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .empty-logo img {
+      width: 100%; height: 100%; object-fit: cover;
     }
     .empty-state h2 {
       font-size: 28px; font-weight: 600; margin-bottom: 8px;
@@ -112,12 +114,11 @@
     .msg.user { justify-content: flex-end; }
     .msg-avatar {
       width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; margin-top: 2px;
-    }
-    .msg.assistant .msg-avatar {
-      background: var(--user-bg); color: #fff;
+      margin-top: 2px; overflow: hidden;
       box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .msg-avatar img {
+      width: 100%; height: 100%; object-fit: cover;
     }
     .msg.user .msg-avatar { display: none; }
     .msg-bubble {
@@ -220,10 +221,12 @@
     }
     .login-logo {
       width: 56px; height: 56px; border-radius: 16px;
-      background: var(--user-bg); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; font-weight: 600; margin: 0 auto 20px;
+      margin: 0 auto 20px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .login-logo img {
+      width: 100%; height: 100%; object-fit: cover;
     }
     .login-box h1 {
       font-size: 30px; font-weight: 700; margin-bottom: 4px;
@@ -290,7 +293,7 @@
 <!-- LOGIN -->
 <div id="loginOverlay" class="login-overlay">
   <div class="login-box">
-    <div class="login-logo">e</div>
+    <div class="login-logo"><img src="https://www.efans.co.uk/cdn/shop/files/Favicon2_96x96.jpg?v=1613717291" alt="eFans"></div>
     <h1>Ask eFans</h1>
     <p class="sub">Staff Knowledge Assistant</p>
     <label for="pass">Passcode</label>
@@ -318,7 +321,7 @@
   <div class="messages" id="messagesArea">
     <div class="messages-inner" id="messagesInner">
       <div id="emptyState" class="empty-state">
-        <div class="empty-logo">e</div>
+        <div class="empty-logo"><img src="https://www.efans.co.uk/cdn/shop/files/Favicon2_96x96.jpg?v=1613717291" alt="eFans"></div>
         <h2>How can I help?</h2>
         <p>Ask about orders, customers, suppliers, products &mdash; anything eFans</p>
         <div class="starters">
@@ -454,7 +457,7 @@ function addBubble(role, text) {
   row.className = 'msg ' + role;
 
   if (role === 'assistant') {
-    row.innerHTML = '<div class="msg-avatar">e</div><div class="msg-bubble">' + (text ? renderMarkdown(text) : '') + '</div>';
+    row.innerHTML = '<div class="msg-avatar"><img src="https://www.efans.co.uk/cdn/shop/files/Favicon2_96x96.jpg?v=1613717291" alt="eFans"></div><div class="msg-bubble">' + (text ? renderMarkdown(text) : '') + '</div>';
   } else {
     row.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '</div>';
   }
@@ -467,7 +470,7 @@ function addTyping() {
   const inner = document.getElementById('messagesInner');
   const row = document.createElement('div');
   row.className = 'msg assistant';
-  row.innerHTML = '<div class="msg-avatar">e</div><div class="msg-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
+  row.innerHTML = '<div class="msg-avatar"><img src="https://www.efans.co.uk/cdn/shop/files/Favicon2_96x96.jpg?v=1613717291" alt="eFans"></div><div class="msg-bubble"><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>';
   inner.appendChild(row);
   document.getElementById('messagesArea').scrollTop = 999999;
   return row;
